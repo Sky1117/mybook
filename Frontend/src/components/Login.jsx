@@ -1,25 +1,55 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import toast from "react-hot-toast";
+
 export default function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    const userInfo = {
+      email: data.email,
+      password: data.password,
+    };
+    await axios
+      .post("http://localhost:3001/api/user/login", userInfo)
+      .then((res) => {
+        if (res.data) {
+          toast.success("Login Successfully");
+        }
+        setTimeout(() => {
+          window.location.reload();
+          localStorage.setItem("User", JSON.stringify(res.data.user));
+        }, 2000);
+        document.getElementById("my_modal_3").close();
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response) {
+          toast.error("Error: " + error.response.data.message);
+        }
+      });
+  };
   return (
     <>
       <div>
         <dialog id="my_modal_3" className="modal">
           <div className="modal-box dark:bg-slate-900 dark:text-white">
             <form method="dialog" onSubmit={handleSubmit(onSubmit)}>
-              <Link
+              <button
                 to="/"
                 className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                onClick={() => {
+                  document.getElementById("my_modal_3").close();
+                  <Navigate to="/" />;
+                }}
               >
                 ✕
-              </Link>
+              </button>
 
               <h3 className="font-bold text-lg">Login</h3>
               <div className="mt-4 space-y-2">

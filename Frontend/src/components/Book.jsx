@@ -1,8 +1,12 @@
-import React from "react";
-import list from "../Data/list.json";
+import React, { useEffect, useState } from "react";
 import Cards from "./Cards";
 import { Link } from "react-router-dom";
+import getbook from "../Data/data";
 export default function Book() {
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    getbook(setList);
+  }, []);
   return (
     <>
       <div className="max-w-screen-2xl container mx-auto md:px-20 px-4">

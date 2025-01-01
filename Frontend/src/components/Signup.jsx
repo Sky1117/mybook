@@ -1,14 +1,46 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  replace,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import Login from "./Login";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import toast from "react-hot-toast";
 export default function Signup() {
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    const userInfo = {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    };
+    await axios
+      .post("http://localhost:3001/api/user/signup", userInfo)
+      .then((res) => {
+        if (res.data) {
+          toast.success("Signup Successfully");
+          navigate(from, { replace: true });
+        }
+        localStorage.setItem("User", JSON.stringify(res.data.user));
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response) {
+          toast.error("Error: " + error.response.data.message);
+        }
+      });
+  };
   return (
     <>
       <div className="flex h-screen items-center justify-center">

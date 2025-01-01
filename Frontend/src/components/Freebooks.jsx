@@ -1,10 +1,14 @@
-import React from "react";
-import list from "../Data/list.json";
+import React, { useState, useEffect } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import getbook from "../Data/data";
 import Slider from "react-slick";
 import Cards from "./Cards";
 function Freebooks() {
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    getbook(setList);
+  }, []);
   var settings = {
     dots: true,
     infinite: false,
